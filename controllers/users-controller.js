@@ -59,8 +59,6 @@ const login = async (req, res) => {
         // Validate if user exist in our database
         let user = await User.findOne({ email });
 
-        console.log("user", user);
-
         if (user && (await bcrypt.compare(password, user.password))) {
             let access_token = await jwt.sign(
                 {

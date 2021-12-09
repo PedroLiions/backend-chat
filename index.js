@@ -54,6 +54,8 @@ io.use((socket, next) => {
 
     socket.emit("previousMessages", prevMessages);
 
+    socket.emit("previousUserConnected", usersOnline)
+
     socket.on("sendMessage", async (data) => {
         let message = await Message.create({
             message: data.message,
