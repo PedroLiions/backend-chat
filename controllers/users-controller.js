@@ -4,18 +4,13 @@ const bcrypt = require("bcryptjs");
 const _ = require("lodash");
 
 const register = async (req, res) => {
-// Our register logic starts here
     try {
-        // Get user input
         const { first_name, last_name, email, password } = req.body;
 
-        // Validate user input
         if (!(email && password && first_name && last_name)) {
             res.status(400).send("All input is required");
         }
 
-        // check if user already exist
-        // Validate if user exist in our database
         const oldUser = await User.findOne({ email });
 
         if (oldUser) {
@@ -49,14 +44,12 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        // Get user input
         const { email, password } = req.body;
 
-        // Validate user input
         if (!(email && password)) {
             res.status(400).send({message: "All input is required"});
         }
-        // Validate if user exist in our database
+
         let user = await User.findOne({ email });
 
         if (user && (await bcrypt.compare(password, user.password))) {

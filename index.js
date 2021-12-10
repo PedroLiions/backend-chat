@@ -11,7 +11,7 @@ const bodyParser = require("body-parser");
 const jwt = require('jsonwebtoken');
 const cors = require("cors");
 const Message = require("./model/message");
-const usersOnline = [];
+let usersOnline = [];
 
 app.use(cors())
 app.use(bodyParser.json());
@@ -35,18 +35,24 @@ io.use((socket, next) => {
         next(new Error('Authentication error'));
     }
 }).on('connection', async (socket) => {
-    let userExist = false;
-    usersOnline.forEach(user => {
-        if (user.id === socket.decoded.id) {
-            userExist = true;
-        }
-    })
+    // console.log("conectou", socket.decoded.user_id);
+    // let userExist = false;
+    // usersOnline.forEach(user => {
+    //     console.log("usuário na interação", user);
+    //     if (user.id === socket.decoded.id) {
+    //         console.log("usuario existe", socket.decoded.email);
+    //         userExist = true;
+    //     }
+    // })
+    //
+    // if (! userExist) {
+    //     console.log("vai adicionar o ", socket.decoded.first_name + "::" + socket.decoded.email)
+    //     usersOnline.push(socket.decoded);
+    // }
 
-    if (! userExist) {
-        usersOnline.push(socket.decoded);
-    }
+    usersOnline.push(socket.decoded);
 
-    console.log("users", usersOnline);
+    // console.log("users", usersOnline);
 
     socket.broadcast.emit('usersConnected', usersOnline);
 
@@ -70,6 +76,7 @@ io.use((socket, next) => {
     })
 
     socket.on("disconnect", () => {
+        usersOnline = usersOnline.filter(user => user.user_id != socket.decoded.user_id);
         socket.broadcast.emit('usersConnected', usersOnline);
     })
 });
